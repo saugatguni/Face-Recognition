@@ -38,4 +38,21 @@ for (i, imagePath) in enumerate(imagePaths): #here i will hold the index and ima
 boxes=face_recognition.face_locations(rgb, model=args["detection_method"])
 
 #Now compute the facial embedding for the face
-encodings=
+encodings=face_recognition.face_encodings(rgb, boxes) #encoding is nothing but the feature vectors for images
+
+for encoding in encodings:
+    knownEncodings.append(encoding)
+    knownNames.append(name)
+
+#Now we need to use the encodings in another script which handles the recognition
+
+#dump the facial encodings and names to disk for future recall
+
+print("[INFO] Serializing encodings")
+data={"encodings":knownEncodings, "name":knownNames}
+f=open(args["encodings"], "wb")  #wb=write binary, it is used because the data will be serialized using pickle module which requires binary data handling
+f.write(pickle.dumps(data))  #pickle is a python module used to serialize and deserealize the python objects(convert python objects to byte streams)
+f.close()
+
+
+
