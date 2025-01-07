@@ -18,6 +18,9 @@ args=vars(ap.parse_args())  #detection-method is automatically converted to dete
 print("[INFO] Loading encodings")
 data= pickle.loads(open(args["encodings"], "rb").read())
 
+# Debug statements to verify encodings
+print(f"Number of encodings loaded: {len(data['encodings'])}")
+print(f"Names loaded: {data['names']}")
 #laod the input image and then convert it from BGR to RGB
 
 image=cv2.imread(args["image"])
@@ -45,21 +48,20 @@ for encoding in encodings:
 #if the distance is below some threshold value, then its true. If not then false.
 #it is more of a fancy way of implementing the k-NN model.
 
-if True in matches:
-    matchedIdx=[i for (i, b) in enumerate(matches) if b]
+    if True in matches:
+        matchedIdx=[i for (i, b) in enumerate(matches) if b]
+        counts={} #dictionary
+        for i in matchedIdx:
+            person_name=data["names"][i]
+            counts[person_name]=counts.get(person_name, 0)+1
+
+        name=max(counts, key=counts.get)
     '''for (i, b) in enumerate(matches):
             if b is True:
                 matchesIdx.append(i)'''
-    
-    counts={} #dictionary
+        
 
-    for i in matchedIdx:
-        name=data["names"][i]
-        counts[name]=counts.get(name, 0)+1
-
-    name=max(counts, key=counts.get)
-
-names.append(name)
+    names.append(name)
     
 
 #to loop over the recognized faces
